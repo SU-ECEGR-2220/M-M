@@ -36,23 +36,7 @@ architecture ALU_Arch of ALU is
 
 begin
 	-- Add ALU VHDL implementation here
-	direction <= ALUCtrl(0) xor ALUCtrl(1);
-
-	with ALUCtrl select
-	copy <=		M1(31 downto 0) when "
-			M2(31 downto 0) when "
-			DataIn1 and DataIn2 when "
-			DataIn1 or DataIn2 when"
-			DataIn2(31 downto 0) when others;
-
-	alu1: adder_subtracter port map(
-	alu2: shift_register port map(
-
-	ALUResult <= copy(31 downto 0);
-
-	with copy select
-	Zero <= '1' when "
-		'0' when others;
+	
 
 end architecture ALU_Arch;
 
