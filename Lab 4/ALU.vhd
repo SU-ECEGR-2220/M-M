@@ -56,8 +56,11 @@ begin
 	'1' when '1', -- subtract
 	'Z' when others;
 
-	--encode the operations:
 
+	shift: shift_register PORT MAP(DataIn1(31 downto 0), direction, DataIn2(10 downto 6), shift_res(31 downto 0)); -- perform shift 
+	add_sub: adder_subtracter PORT MAP(DataIn1(31 downto 0), DataIn2(31 downto 0), operation, addsub_res(31 downto 0), carry); --add/sub
+	
+	--encode the operations:
 	with ALUCtrl select op_res <=
 	addsub_res(31 downto 0) when "00000", -- adder (add/addi)
 	addsub_res(31 downto 0) when "00001", -- subtractor
@@ -66,13 +69,12 @@ begin
 	(DataIn1(31 downto 0) AND DataIn2(31 downto 0)) when "00100", -- AND/ANDI
 --	(DataIn1(31 downto 0) AND DataIn2(31 downto 0)) when '00101', -- ANDI
 	(DataIn1(31 downto 0) OR DataIn2(31 downto 0)) when "00110", -- OR/ORI
---	(DataIn1(31 downto 0) OR DataIn2(31 downto 0)) when '00111', -- ORI
+	DataIn2(31 downto 0) when "00111", -- Pass Through DataIn2
 	zeros when others; -- sets the result to 0 if no approved operation was input
 	
-	shift: shift_register PORT MAP(DataIn1(31 downto 0), direction, DataIn2(10 downto 6), shift_res(31 downto 0)); -- perform shift 
-	add_sub: adder_subtracter PORT MAP(DataIn1(31 downto 0), DataIn2(31 downto 0), operation, addsub_res(31 downto 0), carry); --add/sub
 
-	ALUResult(31 downto 0) <= op_res(31 downto 0);
+
+	ALUResult(31 downto 0) <= op_res(31 downto 0); -- get the result
 
 	process(op_res) is
 	begin
