@@ -40,7 +40,8 @@ architecture ALU_Arch of ALU is
 	signal addsub_res: std_logic_vector(31 downto 0); --result of the adder/subtractor
 	signal shift_res: std_logic_vector(31 downto 0); --result of the shifter
 	signal op_res: std_logic_vector(31 downto 0); --result of the operation
-	constant zeros: std_logic_vector(31 downto 0) := (others => '0'); --zero vector for comparison	
+	constant zeros: std_logic_vector(31 downto 0) := (others => '0'); --zero vector for comparison
+	signal carry: std_logic; -- use for adder_subtractor port map	
 begin
 	-- Add ALU VHDL implementation here
    
@@ -69,7 +70,19 @@ begin
 	(DataIn1(31 downto 0) OR DataIn2(31 downto 0)) when '00111', -- ORI
 	zeros when others; -- sets the result to 0 if no approved operation was input
 	
+	shift: shift_register PORT MAP(DataIn1(31 downto 0), direction, DataIn2(), shift_res(31 downto 0)); -- perform shift 
+	add_sub: adder_subtractor PORT MAP(DataIn1(31 downto 0), DataIn2(31 downto 0), operation, addsub_res(31 downto 0), carry); --add/sub
 
+	process(op_res) is
+	begin
+		if(op_res = zeros) then
+			Zero <= '1'; -- tell the user that the result was all 0s
+		else 
+			Zero <= '0'; -- tell the user the operation was performed, no issue
+		end if;
+	end process;
+
+	ALU_result(31 downto 0) <= op_res(31 downto 0);
 
 end architecture ALU_Arch;
 
