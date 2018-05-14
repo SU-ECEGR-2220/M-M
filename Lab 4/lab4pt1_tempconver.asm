@@ -24,7 +24,7 @@
 	
 	li	a7, 6	
 	ecall
-	fmv.s	ft1,fa0	 # Saves user input to ft1
+	fmv.s	ft1,fa0	
 	
 	fsw f10, Fahren, t0
 	jal conversion
