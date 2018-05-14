@@ -34,12 +34,42 @@ architecture ALU_Arch of ALU is
 			dataout: out std_logic_vector(31 downto 0));
 	end component shift_register;
 
-begin
-	-- Add ALU VHDL implementation here
-        --SIGNALS
+	-- Signals
 	signal direction: std_logic; --direction of the shift register
 	signal operation: std_logic; --operation of the adder/subtractor 
+	signal addsub_res: std_logic_vector(31 downto 0); --result of the adder/subtractor
+	signal shift_res: std_logic_vector(31 downto 0); --result of the shifter
+	signal op_res: std_logic_vector(31 downto 0); --result of the operation
+	constant zeros: std_logic_vector(31 downto 0) := (others => '0'); --zero vector for comparison	
+begin
+	-- Add ALU VHDL implementation here
+   
+	-- use first bit of Control input to decide direction
+	with Control(0) select direction <=
+	'0' when '0', --SLL (left) 
+	'1' when '1', --SLR (right)
+	'Z' when others; --set to high impedence for others
+
+	with Control(0) select operation <=
+	'0' when '0', -- add
+	'1' when '1', -- subtract
+	'Z' when others;
+
+	--encode the operations:
+
+	with Control select op_res <=
+	addsub_res when '00000', -- adder
+	addsub_res when '00001', -- subtractor
+	addsub_res when '00010', -- add immediate
+	shift_res when '10000', -- SLL
+	shift_res when '10001', -- SLR
+	(DataIn1(31 downto 0) AND DataIn2(31 downto 0)) when '00100', -- AND
+	(DataIn1(31 downto 0) AND DataIn2(31 downto 0)) when '00101', -- ANDI
+	(DataIn1(31 downto 0) OR DataIn2(31 downto 0)) when '00110', -- OR
+	(DataIn1(31 downto 0) OR DataIn2(31 downto 0)) when '00111', -- ORI
+	zeros when others; -- sets the result to 0 if no approved operation was input
 	
+
 
 end architecture ALU_Arch;
 
