@@ -62,14 +62,14 @@ BEGIN
 		wait for 20 ns;
 
 		--SLL
-		datain_a <= X"01234567";
-		datain_b <= X"11223344";
+		datain_a <= X"11223344";
+		datain_b <= X"00000040";
 		control <= "00001";
 		wait for 20 ns;
 
 		--SLR
-		datain_a <= X"01234567";
-		datain_b <= X"11223344";
+		datain_a <= X"11223344";
+		datain_b <= X"00000040";
 		control <= "10001";
 		wait for 20 ns;
 
@@ -79,7 +79,13 @@ BEGIN
 		control <= "00100";
 		wait for 20 ns;
 		
-		--OR
+		--ANDI
+		datain_a <= X"01234567";
+		datain_b <= X"00000006";
+		control <= "00100";
+		wait for 20 ns;		
+
+		--OR/ORI
 		datain_a <= X"01234567";
 		datain_b <= X"11223344";
 		control <= "00110";
