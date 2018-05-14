@@ -31,16 +31,16 @@ main:
 	or s7, a0, a1
 	sw s7, 20(sp)
 	
-	ori s7, a0, 0x11223344
-	sw s7, 24(sp)
+	#ori s7, a0, 0x11223344
+	#sw s7, 24(sp)
 	
-	li a0, 0x01234567
+	li a0, 0x11223344
 	li a1, 0x00000040
 	
 	sll s7, a0, a1
 	sw s7, 28(sp)
 	
-	slli s7, a0, 3
+	slli s7, a0, 4
 	sw s7, 32(sp)
 	
 	li a0, 0x11223344
