@@ -1,0 +1,69 @@
+# Compile of tALU.vhd was successful.
+# Compile of ALU.vhd was successful.
+# Compile of registers.vhd was successful.
+# 3 compiles, 0 failed with no errors.
+vsim -gui work.testalu_vhd
+# //  ModelSim PE Student Edition 10.4a Apr  7 2015 
+# //
+# //  Copyright 1991-2015 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //  THIS DOCUMENT CONTAINS TRADE SECRETS AND COMMERCIAL OR FINANCIAL
+# //  INFORMATION THAT ARE PRIVILEGED, CONFIDENTIAL, AND EXEMPT FROM
+# //  DISCLOSURE UNDER THE FREEDOM OF INFORMATION ACT, 5 U.S.C. SECTION 552.
+# //  FURTHERMORE, THIS INFORMATION IS PROHIBITED FROM DISCLOSURE UNDER
+# //  THE TRADE SECRETS ACT, 18 U.S.C. SECTION 1905.
+# //
+# // NOT FOR CORPORATE OR PRODUCTION USE.
+# // THE ModelSim PE Student Edition IS NOT A SUPPORTED PRODUCT.
+# // FOR HIGHER EDUCATION PURPOSES ONLY
+# //
+# vsim -gui 
+# Start time: 10:33:38 on May 14,2018
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_unsigned(body)
+# Loading ieee.numeric_std(body)
+# Loading work.testalu_vhd(behavior)
+# Loading work.alu(alu_arch)
+# Loading work.shift_register(shifter)
+# Loading work.adder_subtracter(calc)
+# Loading work.fulladder(addlike)
+# ** Warning: Design size of 10382 statements or 36 leaf instances exceeds ModelSim PE Student Edition recommended capacity.
+# Expect performance to be quite adversely affected.
+add wave -position insertpoint  \
+sim:/testalu_vhd/uut/ALUCtrl \
+sim:/testalu_vhd/uut/ALUResult \
+sim:/testalu_vhd/uut/DataIn1 \
+sim:/testalu_vhd/uut/DataIn2 \
+sim:/testalu_vhd/uut/Zero
+run
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 0  Instance: /testalu_vhd/uut
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 4  Instance: /testalu_vhd/uut
+run -all
+restart -f
+run -all
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 0  Instance: /testalu_vhd/uut
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 4  Instance: /testalu_vhd/uut
+# Paste insertion failed: 0x11223344: (vish-4014) No objects found matching '0x11223344'.
+add wave -position insertpoint  \
+sim:/testalu_vhd/control \
+sim:/testalu_vhd/datain_a \
+sim:/testalu_vhd/datain_b \
+sim:/testalu_vhd/result \
+sim:/testalu_vhd/zeroOut
+restart -f
+run -all
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 0  Instance: /testalu_vhd/uut
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 4  Instance: /testalu_vhd/uut

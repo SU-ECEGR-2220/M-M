@@ -67,7 +67,6 @@ begin
 	shift_res(31 downto 0) when "10000", -- SLL
 	shift_res(31 downto 0) when "10001", -- SLR
 	(DataIn1(31 downto 0) AND DataIn2(31 downto 0)) when "00100", -- AND/ANDI
---	(DataIn1(31 downto 0) AND DataIn2(31 downto 0)) when '00101', -- ANDI
 	(DataIn1(31 downto 0) OR DataIn2(31 downto 0)) when "00110", -- OR/ORI
 	DataIn2(31 downto 0) when "00111", -- Pass Through DataIn2
 	zeros when others; -- sets the result to 0 if no approved operation was input
