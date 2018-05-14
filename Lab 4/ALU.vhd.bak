@@ -72,8 +72,6 @@ begin
 	shift: shift_register PORT MAP(DataIn1(31 downto 0), direction, DataIn2(10 downto 6), shift_res(31 downto 0)); -- perform shift 
 	add_sub: adder_subtracter PORT MAP(DataIn1(31 downto 0), DataIn2(31 downto 0), operation, addsub_res(31 downto 0), carry); --add/sub
 
-	ALUResult(31 downto 0) <= op_res(31 downto 0);
-
 	process(op_res) is
 	begin
 		if(op_res = zeros) then
@@ -82,6 +80,8 @@ begin
 			Zero <= '0'; -- tell the user the operation was performed, no issue
 		end if;
 	end process;
+
+	ALUResult(31 downto 0) <= op_res(31 downto 0);
 
 end architecture ALU_Arch;
 

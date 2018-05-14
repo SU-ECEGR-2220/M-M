@@ -1,0 +1,190 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/Users/Mahalia/Desktop/School Files/ECEGR 2220 (Microprocessor Design)/MicroGitStuff/GitHub/Labs/Lab 3
+Eadder_subtracter
+Z0 w1526279277
+Z1 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z2 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
+Z3 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z4 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z5 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z6 dC:/Users/Mahalia/Desktop/School Files/ECEGR 2220 (Microprocessor Design)/MicroGitStuff/GitHub/TeamRepo/M-M/Lab 4
+Z7 8C:\Users\Mahalia\Desktop\School Files\ECEGR 2220 (Microprocessor Design)\MicroGitStuff\GitHub\TeamRepo\M-M\Lab 4\ALU.vhd
+Z8 FC:\Users\Mahalia\Desktop\School Files\ECEGR 2220 (Microprocessor Design)\MicroGitStuff\GitHub\TeamRepo\M-M\Lab 4\ALU.vhd
+l0
+L94
+VShmdM5]mKTnjn7;ZkHGRJ3
+!s100 DlGoj97]EODflZPgZ7EEi2
+Z9 OP;C;10.4a;61
+32
+Z10 !s110 1526279282
+!i10b 1
+Z11 !s108 1526279282.000000
+Z12 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:\Users\Mahalia\Desktop\School Files\ECEGR 2220 (Microprocessor Design)\MicroGitStuff\GitHub\TeamRepo\M-M\Lab 4\ALU.vhd|
+Z13 !s107 C:\Users\Mahalia\Desktop\School Files\ECEGR 2220 (Microprocessor Design)\MicroGitStuff\GitHub\TeamRepo\M-M\Lab 4\ALU.vhd|
+!i113 1
+Z14 o-work work -2002 -explicit -O0
+Z15 tExplicit 1
+Acalc
+R1
+R2
+R3
+R4
+R5
+Z16 DEx4 work 16 adder_subtracter 0 22 ShmdM5]mKTnjn7;ZkHGRJ3
+l117
+L102
+Z17 VcfEjfkKogK2iL0l^NcSUQ3
+Z18 !s100 mT^1bcoWd^gCZL]Te49JA2
+R9
+32
+R10
+!i10b 1
+R11
+R12
+R13
+!i113 1
+R14
+R15
+Ealu
+R0
+R1
+R2
+R3
+R4
+R5
+R6
+R7
+R8
+l0
+L12
+VZFIf5@;YmC9PVmg62ZSBR2
+!s100 KchH19m_<W<oUzZb`NQV=3
+R9
+32
+R10
+!i10b 1
+R11
+R12
+R13
+!i113 1
+R14
+R15
+Aalu_arch
+R1
+R2
+R3
+R4
+R5
+Z19 DEx4 work 3 alu 0 22 ZFIf5@;YmC9PVmg62ZSBR2
+l45
+L20
+VT72BWUKoboznFjmY^P0RY0
+!s100 :8;HGQQU3`9]U9<V_oeOR0
+R9
+32
+R10
+!i10b 1
+R11
+R12
+R13
+!i113 1
+R14
+R15
+Eshift_register
+R0
+R1
+R2
+R3
+R4
+R5
+R6
+R7
+R8
+l0
+L142
+VUSM[M2nGQFh7LdmAh`=721
+!s100 >2<MAF:nDX5Af:8]hceaZ3
+R9
+32
+R10
+!i10b 1
+R11
+R12
+R13
+!i113 1
+R14
+R15
+Ashifter
+R1
+R2
+R3
+R4
+R5
+Z20 DEx4 work 14 shift_register 0 22 USM[M2nGQFh7LdmAh`=721
+l151
+L149
+Z21 V20IhCkaAHbd@IYFlI1c581
+Z22 !s100 M5YELFX>aC@7Ylj>[`1U<0
+R9
+32
+R10
+!i10b 1
+R11
+R12
+R13
+!i113 1
+R14
+R15
+Etestalu_vhd
+Z23 w1526278260
+R3
+R1
+R2
+R4
+R5
+R6
+Z24 8C:\Users\Mahalia\Desktop\School Files\ECEGR 2220 (Microprocessor Design)\MicroGitStuff\GitHub\TeamRepo\M-M\Lab 4\tALU.vhd
+Z25 FC:\Users\Mahalia\Desktop\School Files\ECEGR 2220 (Microprocessor Design)\MicroGitStuff\GitHub\TeamRepo\M-M\Lab 4\tALU.vhd
+l0
+L11
+VnBh=Jh?9?3UXPmLMYP5U<1
+!s100 R@FPf6HaOUd?f1KE>5<c50
+R9
+32
+R10
+!i10b 1
+Z26 !s108 1526279281.000000
+Z27 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:\Users\Mahalia\Desktop\School Files\ECEGR 2220 (Microprocessor Design)\MicroGitStuff\GitHub\TeamRepo\M-M\Lab 4\tALU.vhd|
+Z28 !s107 C:\Users\Mahalia\Desktop\School Files\ECEGR 2220 (Microprocessor Design)\MicroGitStuff\GitHub\TeamRepo\M-M\Lab 4\tALU.vhd|
+!i113 1
+R14
+R15
+Abehavior
+R3
+R1
+R2
+R4
+R5
+DEx4 work 11 testalu_vhd 0 22 nBh=Jh?9?3UXPmLMYP5U<1
+l34
+L14
+VdM@OJE3`a9MhcFAKn`E<l0
+!s100 <:zI[fC5_4iJ<4UePmY0A2
+R9
+32
+R10
+!i10b 1
+R26
+R27
+R28
+!i113 1
+R14
+R15

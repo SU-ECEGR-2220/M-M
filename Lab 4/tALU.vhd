@@ -56,7 +56,10 @@ BEGIN
 		wait for 20 ns; 			-- result = 0x124578AB  and zeroOut = 0
 
 		-- Add test cases here to drive the ALU implementation
-
+		datain_a <= X"01234567";	-- DataIn in hex
+		datain_b <= X"11223344";
+		control  <= "00001";		-- Control in binary (SUB)
+		wait for 20 ns; 			-- result =   and zeroOut = 
 
 		wait; -- will wait forever
 	END PROCESS;
