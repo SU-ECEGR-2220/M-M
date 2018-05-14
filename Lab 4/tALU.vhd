@@ -64,7 +64,7 @@ BEGIN
 		--SLL
 		datain_a <= X"11223344";
 		datain_b <= X"00000040";
-		control <= "00001";
+		control <= "10000";
 		wait for 20 ns;
 
 		--SLR
