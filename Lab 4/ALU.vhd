@@ -168,6 +168,7 @@ end architecture shifter;
 =======
 begin
 	-- Add ALU VHDL implementation here
+
 end architecture ALU_Arch;
 
 
