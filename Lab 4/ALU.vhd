@@ -34,6 +34,7 @@ architecture ALU_Arch of ALU is
 			dataout: out std_logic_vector(31 downto 0));
 	end component shift_register;
 
+<<<<<<< HEAD
 	-- Signals
 	signal direction: std_logic; --direction of the shift register
 	signal operation: std_logic; --operation of the adder/subtractor 
@@ -164,3 +165,10 @@ begin
 		datain(31 downto 0) WHEN OTHERS;
 
 end architecture shifter;
+=======
+begin
+	-- Add ALU VHDL implementation here
+end architecture ALU_Arch;
+
+
+>>>>>>> upstream/master
