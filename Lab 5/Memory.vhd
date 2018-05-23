@@ -43,9 +43,8 @@ begin
 
 		DataOut(31 downto 0) <= high_imp(31 downto 0);
 		end if;
-    if falling_edge(Clock) then
-
 		
+    if falling_edge(Clock) then
 	-- Add code to write data to RAM
 	-- Use to_integer(unsigned(Address)) to index the i_ram array
 	
@@ -56,7 +55,7 @@ begin
     end if;
 
 	-- Rest of the RAM implementation
-		if OE = 1 then 
+		if OE = 0 then 
 			 DataOut(31 downto 0) <= i_ram(to_intger(unsigned(Address)))(31 downto 0);
 		else 
 			DataOut(31 downto 0) <= high_imp(31 downto 0);
