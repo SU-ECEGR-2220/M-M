@@ -22,6 +22,8 @@ architecture staticRAM of RAM is
 
    type ram_type is array (0 to 127) of std_logic_vector(31 downto 0);
    signal i_ram : ram_type;
+   constant high_imp: std_logic_vector(31 downto 0) := (others => 'Z');
+   constant zeros: std_logic_vector(31 downto 0) := (others => '0');
 
 begin
 
@@ -35,8 +37,22 @@ begin
     end if;
 
     if falling_edge(Clock) then
+	-- This first line checks if the address is outside of our given
+	-- address range, if so it sets data out to high impedance signal 
+	-- composed of all 'Z's
+		if (to_integer(unsigned(Address)) > 127) then
+
+		DataOut(31 downto 0) <= high_imp(31 downto 0);
+		end if;
+		
 	-- Add code to write data to RAM
 	-- Use to_integer(unsigned(Address)) to index the i_ram array
+	
+		if WE = 1 then
+			i_ram(to_intger(unsigned(Address)))(31 downto 0) <= DataIn(31 downto 0);
+		else
+			DataOut(31 downto 0) <= high_imp(31 downto 0);
+		end if
 	
     end if;
 
