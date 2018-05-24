@@ -84,6 +84,7 @@ entity Registers is
 end entity Registers;
 
 signal R0, R1, R2, R3, R4, R5, R6, R7: std_logic_vector(31 downto 0);
+signal WriteCode: std_logic_vector(5 downto 0);
 
 
 architecture remember of Registers is
@@ -96,5 +97,20 @@ architecture remember of Registers is
 	
 begin
     -- Add your code here for the Register Bank implementation
+	--To write to a register set up the op-code for the 8
+	--registers
+	WriteCode <= WriteCmd & WriteReg; -- sets up a complete enable signal
+	-- don't know if the above line is useful or not
+	
+--	with WriteCode select <=
+	--"000" when "000000"
+	 -- 000 -> en32 en16 en8 -> A0
+	
+	
+	--need to creat 8 registers
+	--somehow will be a bank of 32 bits that is composed
+	--of the registers A0-A7, read out to each signal R0-R7
+	
+	
 	
 end remember;
