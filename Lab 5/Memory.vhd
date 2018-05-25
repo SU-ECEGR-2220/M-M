@@ -95,14 +95,18 @@ architecture remember of Registers is
 	end component;
 	
 begin
+
+WriteCode <= WriteCmd & WriteReg;
 	
-R0 <= writeData when WriteCmd&Writereg = "100001";
-R1 <= writeData when WriteCmd&Writereg = "100001";
-R2 <= writeData when WriteCmd&Writereg = "100011";
-R3 <= writeData when WriteCmd&Writereg = "100100";
-R4 <= writeData when WriteCmd&Writereg = "100101";
-R5 <= writeData when WriteCmd&Writereg = "100110";
-R6 <= writeData when WriteCmd&Writereg = "100111";
-R7 <= writeData when WriteCmd&Writereg = "101000";    
+R0 <= writeData when WriteCode = "100001";
+R1 <= writeData when WriteCode = "100001";
+R2 <= writeData when WriteCode = "100011";
+R3 <= writeData when WriteCode = "100100";
+R4 <= writeData when WriteCode = "100101";
+R5 <= writeData when WriteCode = "100110";
+R6 <= writeData when WriteCode = "100111";
+R7 <= writeData when WriteCode = "101000";    
+
+
 
 end remember;
