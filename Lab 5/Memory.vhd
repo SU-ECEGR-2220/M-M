@@ -95,6 +95,14 @@ architecture remember of Registers is
 	end component;
 	
 begin
-    -- Add your code here for the Register Bank implementation
 	
+R0 <= writeData when WriteCmd&Writereg = "100001";
+R1 <= writeData when WriteCmd&Writereg = "100001";
+R2 <= writeData when WriteCmd&Writereg = "100011";
+R3 <= writeData when WriteCmd&Writereg = "100100";
+R4 <= writeData when WriteCmd&Writereg = "100101";
+R5 <= writeData when WriteCmd&Writereg = "100110";
+R6 <= writeData when WriteCmd&Writereg = "100111";
+R7 <= writeData when WriteCmd&Writereg = "101000";    
+
 end remember;
