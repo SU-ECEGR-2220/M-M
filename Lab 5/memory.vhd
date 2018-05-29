@@ -93,7 +93,7 @@ architecture remember of Registers is
 
 signal Reg0, Reg1, Reg2, Reg3, Reg4, Reg5, Reg6, Reg7: std_logic_vector(31 downto 0);
 constant high_imp: std_logic_vector(31 downto 0) := (others => 'Z');
-constant zeros: std_logic_vector(31 downto 0) := (others => '0');
+signal zeros: std_logic_vector(31 downto 0) := (others => '0');
 signal WriteCode: std_logic_vector(5 downto 0);
 signal writeEn: std_logic_vector(8 downto 0);
 	
@@ -118,19 +118,19 @@ begin
 	-- map to each register using the coding above:
 	-- note that we are using all zeroes for the enable bits because that is how 
 	-- our 32 bit reg is set up in registers to write in data!
-	a0:		register32 port map(WriteData, '0', '0', '0', WriteEn(1), Reg0);
-	a1:		register32 port map(WriteData, '0', '0', '0', WriteEn(2), Reg1);
-	a2:		register32 port map(WriteData, '0', '0', '0', WriteEn(3), Reg2);
-	a3:		register32 port map(WriteData, '0', '0', '0', WriteEn(4), Reg3);
-	a4:		register32 port map(WriteData, '0', '0', '0', WriteEn(5), Reg4);
-	a5:		register32 port map(WriteData, '0', '0', '0', WriteEn(6), Reg5);
-	a6:		register32 port map(WriteData, '0', '0', '0', WriteEn(7), Reg6);
-	a7:		register32 port map(WriteData, '0', '0', '0', WriteEn(8), Reg7);
-	zeros:		register32 port map(zeros, '0', '0', '0', WriteEn(0), zeros);
+	a0:		register32 port map(WriteData, '0', '0', '0', WriteEn(1),'0', '0', Reg0(31 downto 0));
+	a1:		register32 port map(WriteData, '0', '0', '0', WriteEn(2),'0', '0', Reg1);
+	a2:		register32 port map(WriteData, '0', '0', '0', WriteEn(3),'0', '0', Reg2);
+	a3:		register32 port map(WriteData, '0', '0', '0', WriteEn(4),'0', '0', Reg3);
+	a4:		register32 port map(WriteData, '0', '0', '0', WriteEn(5),'0', '0', Reg4);
+	a5:		register32 port map(WriteData, '0', '0', '0', WriteEn(6),'0', '0', Reg5);
+	a6:		register32 port map(WriteData, '0', '0', '0', WriteEn(7),'0', '0', Reg6);
+	a7:		register32 port map(WriteData, '0', '0', '0', WriteEn(8),'0', '0', Reg7);
+	zerReg:		register32 port map(zeros, '0', '0', '0', WriteEn(0),'0', '0', zeros);
 
 	-- read out register 1
 	with ReadReg1 select ReadData1 <=
-	zeros when "00000",
+	zerReg when "00000",
 	a0 when "10000",
 	a1 when "10001",
 	a2 when "10010",
@@ -143,7 +143,7 @@ begin
 
 	-- read out register 2
 	with ReadReg2 select ReadData2 <=
-	zeros when "00000",
+	zerReg when "00000",
 	a0 when "10000",
 	a1 when "10001",
 	a2 when "10010",
