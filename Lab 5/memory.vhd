@@ -130,28 +130,28 @@ begin
 
 	-- read out register 1
 	with ReadReg1 select ReadData1 <=
-	zerReg when "00000",
-	a0 when "10000",
-	a1 when "10001",
-	a2 when "10010",
-	a3 when "10011",
-	a4 when "10100",
-	a5 when "10101",
-	a6 when "10110",
-	a7 when "10111",
+	zeros when "00000",
+	Reg0 when "10000",
+	Reg1 when "10001",
+	Reg2 when "10010",
+	Reg3 when "10011",
+	Reg4 when "10100",
+	Reg5 when "10101",
+	Reg6 when "10110",
+	Reg7 when "10111",
 	high_imp when others;
 
 	-- read out register 2
 	with ReadReg2 select ReadData2 <=
-	zerReg when "00000",
-	a0 when "10000",
-	a1 when "10001",
-	a2 when "10010",
-	a3 when "10011",
-	a4 when "10100",
-	a5 when "10101",
-	a6 when "10110",
-	a7 when "10111",
+	zeros when "00000",
+	Reg0 when "10000",
+	Reg1 when "10001",
+	Reg2 when "10010",
+	Reg3 when "10011",
+	Reg4 when "10100",
+	Reg5 when "10101",
+	Reg6 when "10110",
+	Reg7 when "10111",
 	high_imp when others;
 
 end remember;
