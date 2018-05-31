@@ -1,0 +1,47 @@
+# Compile of memory.vhd was successful.
+# Compile of registers.vhd was successful.
+# Compile of tMemory.vhd was successful.
+# 3 compiles, 0 failed with no errors.
+# Load canceled
+vsim work.tmemory_vhd
+# vsim 
+# Start time: 17:04:51 on May 30,2018
+# Error loading design
+# Compile of ALU.vhd was successful.
+vsim work.tmemory_vhd
+# vsim 
+# Start time: 17:08:11 on May 30,2018
+# Error loading design
+vsim work.ram
+# vsim 
+# Start time: 17:08:31 on May 30,2018
+# Error loading design
+vsim work.tmemory_vhd(behavior)
+# vsim 
+# Start time: 17:09:37 on May 30,2018
+# Error loading design
+vsim work.fulladder
+# vsim 
+# Start time: 17:09:41 on May 30,2018
+# Error loading design
+vsim work.register32
+# vsim 
+# Start time: 17:09:43 on May 30,2018
+# Error loading design
+vsim work.registers
+# vsim 
+# Start time: 17:09:45 on May 30,2018
+# Error loading design
+vsim work.adder_subtracter
+# vsim 
+# Start time: 17:09:48 on May 30,2018
+# Error loading design
+# Compile of memory.vhd was successful.
+# Compile of registers.vhd was successful.
+# Compile of tMemory.vhd was successful.
+# Compile of ALU.vhd was successful.
+# 4 compiles, 0 failed with no errors.
+vsim work.tmemory_vhd
+# vsim 
+# Start time: 17:11:24 on May 30,2018
+# Error loading design

@@ -55,7 +55,6 @@ BEGIN
 		control  <= "00000";		-- Control in binary (ADD and ADDI test)
 		wait for 20 ns; 			-- result = 0x124578AB  and zeroOut = 0
 
-<<<<<<< HEAD
 		--DATA PASS THROUGH
 		datain_a <= X"01234567";
 		datain_b <= X"11223344";
@@ -96,17 +95,16 @@ BEGIN
 		datain_a <= X"01234567";	-- DataIn in hex
 		datain_b <= X"11223344";
 		control  <= "00001";		-- Control in binary (SUB)
-		wait for 20 ns; 			-- result =   and zeroOut = 
-=======
+		wait for 20 ns; 			-- result =   and zeroOut 
 		-- Add test cases here to drive the ALU implementation
 
->>>>>>> upstream/master
+
 
 		wait; -- will wait forever
 	END PROCESS;
 
-<<<<<<< HEAD
+
 END architecture behavior;
-=======
-END;
->>>>>>> upstream/master
+
+
+

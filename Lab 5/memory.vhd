@@ -118,9 +118,9 @@ begin
 	-- map to each register using the coding above:
 	-- note that we are using all zeroes for the enable bits because that is how 
 	-- our 32 bit reg is set up in registers to write in data!
-	a0:		register32 port map(WriteData, '0', '0', '0', WriteEn(1),'0', '0', Reg0(31 downto 0));
-	a1:		register32 port map(WriteData, '0', '0', '0', WriteEn(2),'0', '0', Reg1);
-	a2:		register32 port map(WriteData, '0', '0', '0', WriteEn(3),'0', '0', Reg2);
+	a0:		register32 port map(WriteData, '0', '1', '1', WriteEn(1),'0', '0', Reg0(31 downto 0));
+	a1:		register32 port map(WriteData, '0', '1', '1', WriteEn(2),'0', '0', Reg1);
+	a2:		register32 port map(WriteData, '0', '1', '1', WriteEn(3),'0', '0', Reg2);
 	a3:		register32 port map(WriteData, '0', '0', '0', WriteEn(4),'0', '0', Reg3);
 	a4:		register32 port map(WriteData, '0', '0', '0', WriteEn(5),'0', '0', Reg4);
 	a5:		register32 port map(WriteData, '0', '0', '0', WriteEn(6),'0', '0', Reg5);
