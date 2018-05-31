@@ -27,6 +27,7 @@ type ram_type is array (0 to 127) of std_logic_vector(31 downto 0);
 signal i_ram : ram_type;
 constant high_imp: std_logic_vector(31 downto 0) := (others => 'Z');
 constant zeros: std_logic_vector(31 downto 0) := (others => '0');
+signal uns: unsigned(29 downto 0);
 
 begin
 
@@ -38,28 +39,25 @@ begin
           i_ram(i) <= X"00000000";
       end loop;
     end if;
-	
-	-- This first line checks if the address is outside of our given
-	-- address range, if so it sets data out to high impedance signal 
-	-- composed of all 'Z's
-	if (to_integer(unsigned(Address)) > 127) then
-		DataOut(31 downto 0) <= high_imp(31 downto 0);
-	end if;
-		
-	if falling_edge(Clock) then	
+-- This first line checks if the address is outside of our given
+-- address range, if so it sets data out to high impedance signal 
+-- composed of all 'Z's
 	-- write out on the clock edge if WE is high
+	uns <= unsigned(Address);
+	if falling_edge(Clock) then	
 		if WE = '1' then
-			i_ram(to_integer(unsigned(Address))) <= DataIn;
+			if (to_integer(uns) <= 127) then 
+				i_ram(to_integer(uns)) <= DataIn;
+			end if;
 		end if;	
-    end if;
-	
-	-- read out from the register bank
-	if OE = '0' then 
-		 DataOut <= i_ram(to_integer(unsigned(Address)));
-	else 
-		DataOut(31 downto 0) <= high_imp(31 downto 0);
 	end if;
-		
+	
+	-- output enable conditions for ram
+	if ((to_integer(unsigned(Address)) <= 127) AND (OE = '0')) then
+		DataOut <= i_ram(to_integer(unsigned(Address)));
+	else
+		DataOut(31 downto 0) <= high_imp(31 downto 0);
+	end if;	
 		
   end process RamProc;
 
@@ -105,14 +103,14 @@ begin
 	--encoding
 	with WriteCode select writeEn <=
 	"000000001" when "100000", --zeros
-	"000000010" when "101010", --a0
-	"000000100" when "110001",	-- a1
-	"000001000" when "101011",	-- a2
-	"000010000" when "101100",	-- a3
-	"000100000" when "101101",	-- a4
-	"001000000" when "110101",	-- a5
-	"010000000" when "101110",	-- a6
-	"100000000" when "101111",	-- a7
+	"000000010" when "100001",	--"101010", --a0
+	"000000100" when "100010",	--"110001",	-- a1
+	"000001000" when "100011",	--"101011",	-- a2
+	"000010000" when "100100",	--"101100",	-- a3
+	"000100000" when "100101",	--"101101",	-- a4
+	"001000000" when "100110",	--"110101",	-- a5
+	"010000000" when "100111",	--"101110",	-- a6
+	"100000000" when "101000",--"101111",	-- a7
 	"000000000" when others;	
 
 	-- map to each register using the coding above:
@@ -121,12 +119,12 @@ begin
 	a0:		register32 port map(WriteData, '0', '1', '1', WriteEn(1),'0', '0', Reg0(31 downto 0));
 	a1:		register32 port map(WriteData, '0', '1', '1', WriteEn(2),'0', '0', Reg1);
 	a2:		register32 port map(WriteData, '0', '1', '1', WriteEn(3),'0', '0', Reg2);
-	a3:		register32 port map(WriteData, '0', '0', '0', WriteEn(4),'0', '0', Reg3);
-	a4:		register32 port map(WriteData, '0', '0', '0', WriteEn(5),'0', '0', Reg4);
-	a5:		register32 port map(WriteData, '0', '0', '0', WriteEn(6),'0', '0', Reg5);
-	a6:		register32 port map(WriteData, '0', '0', '0', WriteEn(7),'0', '0', Reg6);
-	a7:		register32 port map(WriteData, '0', '0', '0', WriteEn(8),'0', '0', Reg7);
-	zerReg:		register32 port map(zeros, '0', '0', '0', WriteEn(0),'0', '0', zeros);
+	a3:		register32 port map(WriteData, '0', '1', '1', WriteEn(4),'0', '0', Reg3);
+	a4:		register32 port map(WriteData, '0', '1', '1', WriteEn(5),'0', '0', Reg4);
+	a5:		register32 port map(WriteData, '0', '1', '1', WriteEn(6),'0', '0', Reg5);
+	a6:		register32 port map(WriteData, '0', '1', '1', WriteEn(7),'0', '0', Reg6);
+	a7:		register32 port map(WriteData, '0', '1', '1', WriteEn(8),'0', '0', Reg7);
+	zerReg:		register32 port map(zeros, '0', '1', '1', WriteEn(0),'0', '0', zeros);
 
 	-- read out register 1
 	with ReadReg1 select ReadData1 <=
