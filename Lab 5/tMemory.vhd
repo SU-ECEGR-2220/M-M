@@ -136,7 +136,7 @@ BEGIN
 		wait for 5 ns;
 		clock <= '0';
 		wait for 5 ns;
-
+--170ns
 		-- Read back content
 		oe      <= '0';
 		we      <= '0';
@@ -245,25 +245,25 @@ BEGIN
 		wait for 5 ns;	
 		writeCmd <= '0';
 		wait for 5 ns;	
-
-		readReg1 <= "00000";
-		readReg2 <= "01010";
+--another 170ns
+		readReg1 <= "00000"; --x0
+		readReg2 <= "00010"; --high imp
 		wait for 10 ns;	
 
-		readReg1 <= "01011";
-		readReg2 <= "01100";
+		readReg1 <= "01011"; --high imp
+		readReg2 <= "00100"; --high imp
 		wait for 10 ns;	
 
 		readReg1 <= "01101";
 		readReg2 <= "01110";
 		wait for 10 ns;	
 
-		readReg1 <= "01111";
-		readReg2 <= "10000";
+		readReg1 <= "01111"; --high imp
+		readReg2 <= "10000"; --a0
 		wait for 10 ns;	
 
-		readReg1 <= "10001";
-		readReg2 <= "00000";
+		readReg1 <= "10001"; --a1
+		readReg2 <= "00000"; -- x0
 		wait for 10 ns;	
 
 		wait; -- will wait forever
