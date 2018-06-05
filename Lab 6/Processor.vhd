@@ -87,5 +87,9 @@ architecture holistic of Processor is
 
 begin
 	-- Add your code here
+
+
+
+
 end holistic;
 
