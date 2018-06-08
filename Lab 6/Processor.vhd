@@ -86,8 +86,40 @@ architecture holistic of Processor is
 	end component adder_subtracter;
 
 begin
-	-- Add your code here
+	-- Add signals
 
+	-- MUXES
+	signal MUXtoALU: std_logic_vector(31 downto 0); -- mux output to ALU
+	signal MUXtoWD: std_logic_vector(31 downto 0); -- mux output to write data register from DM or ALU
+	signal MUXtoPC: std_logic_vector(31 downto 0); -- mux output to PC from ADD/SUM
+
+	--Control
+	signal Ctrl_branch: std_logic_vector(1 downto 0); -- Control to branch: eq/not eq
+	signal Ctrl_MemRead: std_logic;			  -- Control to data memory
+	signal Ctrl_MemtoReg: std_logic;		  -- Control to MUX
+	signal Ctrl_ALUCtrl: std_logic_vector(4 downto 0); -- Control to ALU
+	signal Ctrl_MemWrite: std_logic;		  -- Control to data memory
+	signal Ctrl_ALUSrc: std_logic;			  -- Control to MUX
+	signal Ctrl_RegWrite: std_logic;		  -- Control to registers
+	signal Ctrl_ImmGen: std_logic_vector(1 downto 0); -- Control to Imm Gen
+
+	--Instruction Memory
+	signal Instr_mem: std_logic_vector(31 downto 0);  -- Intruction memory to ctrl, registers, and imm gen
+
+	--PC Out
+	signal PC_Out: std_logic_vector(31 downto 0); -- PC to instruction memory
+
+	--Registers
+	signal Read_Data_1: std_logic_vector(31 downto 0);  -- registers to ALU
+	signal Read_Data_2: std_logic_vector(31 downto 0);  -- registers to MUX
+
+	--ALU
+	--others
+
+begin
+	Ctrl: Control port map(clock, instruction(6 downto 0), instruction(14 downto 12), instruction(31 downto 27), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
+
+	PC: ProgramCounter port map(reset, clock, 
 
 
 
