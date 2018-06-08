@@ -128,10 +128,15 @@ begin
 
 	PC: ProgramCounter port map(reset, clock, MUXtoPC, PC_Out);
 
-	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); 
+	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); -- not complete
 	MUXPC: BusMux2to1   port map(Ctrl_branch, adder_output_1, adder_output_2, MUXtoPC);
-	MUXWD: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_, MUXtoWD); -- incomplete me thinks
+	MUXWD: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_, MUXtoWD); -- not complete
+
+	Add_sub: adder_subtracter port map(
  
+	Regis: Registers port map(instruction(19 downto 15), instruction(24 downto 20), instruction(11 downto 7), MUXtoWD, Ctrl_RegWrite, Read_Data_1, Read_Data_2);
+
+	
 
 
 end holistic;
