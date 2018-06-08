@@ -113,14 +113,25 @@ begin
 	signal Read_Data_1: std_logic_vector(31 downto 0);  -- registers to ALU
 	signal Read_Data_2: std_logic_vector(31 downto 0);  -- registers to MUX
 
-	--ALU
-	--others
+	--Adder
+	signal adder_output_1: std_logic_vector(31 downto 0);
+	signal adder_output_2: std_logic_vector(31 downto 0);
+	signal C01: std_logic;
+	signal C02: std_logic;	
+
+	--Other
+	signal ImmGen: std_logic_vector(31 downto 0);
+
 
 begin
 	Ctrl: Control port map(clock, instruction(6 downto 0), instruction(14 downto 12), instruction(31 downto 27), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
 
-	PC: ProgramCounter port map(reset, clock, 
+	PC: ProgramCounter port map(reset, clock, MUXtoPC, PC_Out);
 
+	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); 
+	MUXPC: BusMux2to1   port map(Ctrl_branch, adder_output_1, adder_output_2, MUXtoPC);
+	MUXWD: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_, MUXtoWD); -- incomplete me thinks
+ 
 
 
 end holistic;
