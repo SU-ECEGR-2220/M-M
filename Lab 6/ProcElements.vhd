@@ -50,6 +50,30 @@ begin
 -----------------------------
 ----- Decode operations -----
 -----------------------------
+-- funct 3 and funct 7 are part of decoding
+    
+    -- Op-code decode
+    MemtoReg <= '1' when opcode = "0000011" else '0'; --LW
+    MemRead <= '0' when opcode = "0000011" else '1'; --LW
+    MemWrite <= '1' when opcode = "0100011" else '0'; --SW
+
+    ALUsrc <=
+        '1' when opcode = "0010011" and funct3 = "000" else --addi
+        '1' when opcode = "0010011" and funct3 = "110" else --ori
+        '1' when opcode = "0010011" and funct3 = "100" else  --xori
+        '1' when opcode = "0100011" else --sw
+        '1' when opcode = "0000011" else --lw
+        '1' when opcode = "0010011" and funct3 = "001" else  --sll
+        '1' when opcode = "0010011" and funct3 = "101" else  --srl
+        '1' when opcode = "0010011" and funct3 = "001" else  --slli
+        '1' when opcode = "0010011" and funct3 = "101" else  --srli
+        '1' when opcode = "0110111" else   --lui
+        '0';
+
+    Branch <=
+        "01" when opcode = "1100011" and funct3 = "000" else --beq
+        "10" when opcode = "110011" and funct3 = "001" else --bne
+        "00";
 
 
 end Boss;
