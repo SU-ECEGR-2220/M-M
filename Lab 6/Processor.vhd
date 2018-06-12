@@ -22,7 +22,7 @@ architecture holistic of Processor is
                Branch : out  STD_LOGIC_VECTOR(1 downto 0);
                MemRead : out  STD_LOGIC;
                MemtoReg : out  STD_LOGIC;
-               ALUCtrl : out  STD_LOGIC_VECTOR(4 downto 0);
+               ALUCtrl : out  STD_LOGIC_VECTOR(4 downto 0); --ALUOP
                MemWrite : out  STD_LOGIC;
                ALUSrc : out  STD_LOGIC;
                RegWrite : out  STD_LOGIC;
@@ -38,30 +38,30 @@ architecture holistic of Processor is
 	end component;
 	
 	component Registers
-	    Port(ReadReg1: in std_logic_vector(4 downto 0); 
-                 ReadReg2: in std_logic_vector(4 downto 0); 
-                 WriteReg: in std_logic_vector(4 downto 0);
-		 WriteData: in std_logic_vector(31 downto 0);
-		 WriteCmd: in std_logic;
-		 ReadData1: out std_logic_vector(31 downto 0);
-		 ReadData2: out std_logic_vector(31 downto 0));
+	    Port(	ReadReg1: in std_logic_vector(4 downto 0); 
+                ReadReg2: in std_logic_vector(4 downto 0); 
+                WriteReg: in std_logic_vector(4 downto 0);
+				WriteData: in std_logic_vector(31 downto 0);
+				WriteCmd: in std_logic;
+				ReadData1: out std_logic_vector(31 downto 0);
+		 		ReadData2: out std_logic_vector(31 downto 0));
 	end component;
 
 	component InstructionRAM
-    	    Port(Reset:	  in std_logic;
-		 Clock:	  in std_logic;
-		 Address: in std_logic_vector(29 downto 0);
-		 DataOut: out std_logic_vector(31 downto 0));
+    	Port(	Reset:	  in std_logic;
+		 		Clock:	  in std_logic;
+				Address: in std_logic_vector(29 downto 0);
+		 		DataOut: out std_logic_vector(31 downto 0));
 	end component;
 
 	component RAM 
-	    Port(Reset:	  in std_logic;
-		 Clock:	  in std_logic;	 
-		 OE:      in std_logic;
-		 WE:      in std_logic;
-		 Address: in std_logic_vector(29 downto 0);
-		 DataIn:  in std_logic_vector(31 downto 0);
-		 DataOut: out std_logic_vector(31 downto 0));
+	Port(	Reset:	  in std_logic;
+			Clock:	  in std_logic;	 
+			OE:      in std_logic;
+		 	WE:      in std_logic;
+		 	Address: in std_logic_vector(29 downto 0);
+		 	DataIn:  in std_logic_vector(31 downto 0);
+		 	DataOut: out std_logic_vector(31 downto 0));
 	end component;
 	
 	component BusMux2to1
@@ -87,6 +87,9 @@ architecture holistic of Processor is
 
 begin
 	-- Add signals
+	-- changed separated signals based on operation
+
+	
 
 	-- MUXES
 	signal MUXtoALU: std_logic_vector(31 downto 0); -- mux output to ALU
