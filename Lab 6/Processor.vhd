@@ -85,7 +85,6 @@ architecture holistic of Processor is
 			co: out std_logic);
 	end component adder_subtracter;
 
-begin
 	-- Add signals
 	-- changed separated signals based on operation
 
