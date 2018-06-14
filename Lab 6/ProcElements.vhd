@@ -75,6 +75,24 @@ begin
         "10" when opcode = "110011" and funct3 = "001" else --bne
         "00";
 
+    ALUOp <=
+        "00000" when opcode = "" and "" = else -- add
+        "00001" when opcode = "" and "" = else -- sub
+        "10000" when opcode = "" and "" = else -- sll
+        "10001" when opcode = "" and "" = else -- srl
+        "" when opcode = "" and "" = else -- beq
+        "" when opcode = "" and "" = else -- bne
+        "" when opcode = "" and "" = else -- lui
+        "" when opcode = "" and "" = else -- sw
+        "" when opcode = "" and "" = else -- lw
+        "" when opcode = "" and "" = else -- addi
+        "00110" when opcode = "" and "" = else -- ori
+        "00110" when opcode = "" and "" = else -- or
+        "10001" when opcode = "" and "" = else -- slli
+        "00100" when opcode = "" and "" = else -- andi
+        "10000" when opcode = "" and "" = else -- srli
+        "00100" when opcode = "" and "" = else -- and
+
 
 end Boss;
 
