@@ -78,8 +78,8 @@ begin
     ALUCtrl <=
         "00000" when opcode = "0110011" and "" = else -- add
         "00001" when opcode = "0110011" and "" = else -- sub
-        "10000" when opcode = "0110011" and "" = else -- sll
-        "10001" when opcode = "0110011" and "" = else -- srl
+        "10000" when opcode = "0110011" and funct3 = "001" else -- sll
+        "10001" when opcode = "0110011" and funct3 = "101" else   -- srl
         "00001" when opcode = "1100011" and "" = else -- beq
         "00001" when opcode = "1100011" and "" = else -- bne
         "00000" when opcode = "0110111" and "" = else -- lui
@@ -88,9 +88,9 @@ begin
         "00010" when opcode = "0010011" and "" = else -- addi
         "00110" when opcode = "0010011" and "" = else -- ori
         "00110" when opcode = "0110011" and "" = else -- or
-        "10000" when opcode = "0010011" and "" = else -- slli
+        "10000" when opcode = "0010011" and funct3 = "001" else -- slli
         "00100" when opcode = "0010011" and "" = else -- andi
-        "10001" when opcode = "0010011" and "" = else -- srli
+        "10001" when opcode = "0010011" and funct3 = "101" else  -- srli
         "00100" when opcode = "0110011" and "" = else -- and
 
 
