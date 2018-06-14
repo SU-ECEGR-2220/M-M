@@ -103,7 +103,7 @@ architecture holistic of Processor is
 	signal Ctrl_MemWrite: std_logic;		  -- Control to data memory
 	signal Ctrl_ALUSrc: std_logic;			  -- Control to MUX
 	signal Ctrl_RegWrite: std_logic;		  -- Control to registers
-	signal Ctrl_ImmGen: std_logic_vector(1 downto 0); -- Control to Imm Gen
+	signal Ctrl_ImmGen: std_logic; -- Control to Imm Gen
 
 	--Instruction Memory
 	signal Instr_mem: std_logic_vector(31 downto 0);  -- Intruction memory to ctrl, registers, and imm gen
@@ -123,29 +123,30 @@ architecture holistic of Processor is
 
 	--Other
 	signal ImmGen: std_logic_vector(31 downto 0);
-	signal DataOut std_logic_vector(31 downto 0);
+	signal DataOut: std_logic_vector(31 downto 0);
+	signal ReadData: std_logic_vector(31 downto 0);
 
 	--ALU 
 	signal ALUzero: std_logic;
-	signal ALUresult: std_logic_vector(31 downto 0);
+	signal ALUresult: std_logic;
 
 
 begin
-	Ctrl: Control port map(clock, instruction(6 downto 0), instruction(14 downto 12), instruction(31 downto 27), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
+	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 27), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
 
 	PC: ProgramCounter port map(reset, clock, MUXtoPC, PC_Out);
 
 	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); -- check RD
 	MUXPC: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
-	MUXWD: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_, MUXtoWD); -- not complete- data?
+	MUXWD: BusMux2to1  port map(Ctrl_MemtoReg, ReadData, MUXtoWD); -- not complete- data?
 
 	Add_sub: adder_subtracter port map(PC_Out, ImmGen, '0', adder_output_1, C02);
 
-	Inst_ram: InstructionRAM port map(reset, clock, PC_Out(31 downto 2), instruction);
+	Inst_ram: InstructionRAM port map(reset, clock, PC_Out(31 downto 2), Instr_mem);
  
-	Regis: Registers port map(instruction(19 downto 15), instruction(24 downto 20), instruction(11 downto 7), MUXtoWD, Ctrl_RegWrite, Read_Data_1, Read_Data_2);
+	Regis: Registers port map(Instr_mem(19 downto 15), Instr_mem(24 downto 20), Instr_mem(11 downto 7), MUXtoWD, Ctrl_RegWrite, Read_Data_1, Read_Data_2);
 
-	ALU_: ALU port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUresult, ALUzero); --
+	ArithLU: ALU port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUresult, ALUzero); --
 
 	Data_mem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, MUXtoALU(31 downto 0), Read_Data_1, Read_Data_2);
 
