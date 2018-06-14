@@ -153,10 +153,7 @@ begin
 	ArithLU: ALU port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUresult); --maha changed order to be ALUResult, ALUzero
 
 	Data_mem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, ALUresult(29 downto 0), Read_Data_2, ReadData);
-<<<<<<< HEAD
-=======
 
->>>>>>> 2af6a1be264cd3bd6c0628da374e59a0f8b21b80
 
 
 end holistic;
