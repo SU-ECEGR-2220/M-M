@@ -130,31 +130,44 @@ architecture holistic of Processor is
 	signal ALUzero: std_logic;
 	signal ALUresult: std_logic;
 
+	-- maha's temp sigs
+	signal resultsSig: std_logic_vector(31 downto 0);
+	signal addsubdata: std_logic_vector(31 downto 0);
+	signal dataOut: std_logic_vector(31 downto 0);
+	signal branchbox: std_logic;
+	signal sigZeroMiddle: std_logic;
+	signal upperMuxRes: std_logic_vector(4 downto 0);
+	signal lowerMuxRes: std_logic_vector(4 downto 0);
+	signal resultsSig: std_logic_vector(31 downto 0);
+	signal sigALUResultMiddle: std_logic_vector(4 downto 0);
+	signal sigALUResultUpper: std_logic_vector(4 downto 0);
 
 begin
-	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 27), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
 
-	PC: ProgramCounter port map(reset, clock, MUXtoPC, PC_Out);
-
-	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); -- check RD
-
-	MUXPC1: BusMux2tmo1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
-	MUXWD1: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_2, MUXtoWD); -- not complete- data?
-
-	MUXPC2: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
-	MUXWD2: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_1, MUXtoWD); -- not complete- data?
-
-
-	Add_sub: adder_subtracter port map(PC_Out, ImmGen, '0', adder_output_1, C02);
-
+	PC: ProgramCounter port map(reset, clock, tempSig, PC_Out);	
+	add_sub_four: adder_subtracter port map(PC_Out, X"00000004", '0', adder_output_1, C01);
 	Inst_ram: InstructionRAM port map(reset, clock, PC_Out(31 downto 2), Instr_mem);
- 
-	Regis: Registers port map(Instr_mem(19 downto 15), Instr_mem(24 downto 20), Instr_mem(11 downto 7), MUXtoWD, Ctrl_RegWrite, Read_Data_1, Read_Data_2);
+	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 25), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
+	add_sub_immGenP: port map(PC_Out, ImmGen, '0', adder_output_2, C02);
+	
 
-	ArithLU: ALU port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUresult); --maha changed order to be ALUResult, ALUzero
+	--Registers: Registers PORT MAP (upperMuxRes, Instr_mem(20 downto 16), lowerMuxRes, resultsSig, , sigReadData1, sigReadData2); 
+	Reg: Registers port map(Instr_mem(19 downto 15), Instr_mem(24 downto 20), Instr_mem(11 downto 7), resultsSig, Ctrl_RegWrite, Read_Data_1, Read_Data_2)
+	MiddleMux: BusMux2to1 PORT MAP (Ctrl_ALUSrc, sigReadData2, ImmGen, sigResultMiddle);
 
-	Data_mem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, MUXtoALU(31 downto 0), Read_Data_1, Read_Data_2);
+	MiddleALU: ALU PORT MAP (sigReadData1, sigResultMiddle, Ctrl_ALUOp, sigZeroMiddle, sigALUResultMiddle);
+-
+	DataMemory: RAM PORT MAP (reset, clock, Ctrl_MemRead, Ctrl_MemWrite, sigALUResultMiddle(31 downto 2), sigReadData2, sigReadData);
 
+
+	LastMux: BusMux2to1 PORT MAP (sigMemtoReg, sigALUResultMiddle, sigReadData, resultsSig);
+
+	UpperALU: ALU PORT MAP (Instr_mem, sigShiftLeft2Result, "00010", sigZeroUpper, sigALUResultUpper);
+
+	branchbox <= '1' when (ALUzero = '1' AND Ctrl_branch = "01") else --beq
+		'1' when (ALUzero = '0' AND Ctrl_branch = "10") else --bne
+		'0'; --no branch
+	CompleteMux: BusMux2to1 PORT MAP (branchbox, Instr_mem, sigALUResultUpper, tempSig);
 
 end holistic;
 
