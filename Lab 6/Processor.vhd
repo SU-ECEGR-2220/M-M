@@ -124,6 +124,7 @@ begin
 
 	--Other
 	signal ImmGen: std_logic_vector(31 downto 0);
+	signal DataOut std_logic_vector(31 downto 0);
 
 	--ALU 
 	signal ALUzero: std_logic;
@@ -139,7 +140,7 @@ begin
 	MUXPC: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
 	MUXWD: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_, MUXtoWD); -- not complete- data?
 
-	Add_sub: adder_subtracter port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUresult);
+	Add_sub: adder_subtracter port map(PC_Out, ImmGen, '0', adder_output_1, C02);
 
 	Inst_ram: InstructionRAM port map(reset, clock, PC_Out(31 downto 2), instruction);
  
