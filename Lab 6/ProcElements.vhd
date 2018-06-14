@@ -76,7 +76,6 @@ begin
         "00";
 
     ALUCtrl <=
-<<<<<<< HEAD
         "00000" when opcode = "0110011" and funct3 = "000" and funct7 = "0000000000" else -- add
         "00001" when opcode = "0110011" and funct3 = "000" and funct7 = "0100000" else -- sub
         "10000" when opcode = "0110011" and funct3 = "001" and funct7 = "0000000" else -- sll
@@ -93,6 +92,7 @@ begin
         "00100" when opcode = "0010011" and funct3 = "111" else -- andi
         "10000" when opcode = "0010011" and funct3 = "101" and funct7 = "0100000" else -- srli
         "00100" when opcode = "0110011" and funct3 = "111" and funct7 = "0000000" else -- and
+	"11111";
        
 end Boss;
 
