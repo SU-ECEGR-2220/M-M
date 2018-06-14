@@ -132,7 +132,7 @@ architecture holistic of Processor is
 
 
 begin
-	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 27), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
+	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 25), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
 
 	PC: ProgramCounter port map(reset, clock, MUXtoPC, PC_Out);
 
