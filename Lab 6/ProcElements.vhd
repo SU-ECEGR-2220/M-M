@@ -76,22 +76,22 @@ begin
         "00";
 
     ALUCtrl <=
-        "00000" when opcode = "0110011" and "" = else -- add
-        "00001" when opcode = "0110011" and "" = else -- sub
-        "10000" when opcode = "0110011" and "" = else -- sll
-        "10001" when opcode = "0110011" and "" = else -- srl
-        "00001" when opcode = "1100011" and "" = else -- beq
-        "00001" when opcode = "1100011" and "" = else -- bne
-        "00000" when opcode = "0110111" and "" = else -- lui
-        "00000" when opcode = "0100011" and "" = else -- sw
-        "00000" when opcode = "0000011" and "" = else -- lw
-        "00010" when opcode = "0010011" and "" = else -- addi
-        "00110" when opcode = "0010011" and "" = else -- ori
-        "00110" when opcode = "0110011" and "" = else -- or
-        "10001" when opcode = "0010011" and "" = else -- slli
-        "00100" when opcode = "0010011" and "" = else -- andi
-        "10000" when opcode = "0010011" and "" = else -- srli
-        "00100" when opcode = "0110011" and "" = else -- and
+        "00000" when opcode = "0110011" and funct3 = "000" and funct7 = "0000000000" else -- add
+        "00001" when opcode = "0110011" and funct3 = "000" and funct7 = "0100000" else -- sub
+        "10000" when opcode = "0110011" and funct3 = "001" and funct7 = "0000000" else -- sll
+        "10001" when opcode = "0110011" and funct3 = "100" and funct7 = "0000000" else -- srl
+        "00001" when opcode = "1100011" and funct3 = "000" else -- beq
+        "00001" when opcode = "1100011" and funct3 = "001" else -- bne
+        "00000" when opcode = "0110111" else -- lui
+        "00000" when opcode = "0100011" and funct3 = "010" else -- sw
+        "00000" when opcode = "0000011" and funct3 = "010" else -- lw
+        "00010" when opcode = "0010011" and funct3 = "000" else -- addi
+        "00110" when opcode = "0010011" and funct3 = "110" else -- ori
+        "00110" when opcode = "0110011" and funct3 = "110" and funct7 = "0100000" else -- or
+        "10001" when opcode = "0010011" and funct3 = "001" and funct7 = "0000000" else -- slli
+        "00100" when opcode = "0010011" and funct3 = "111" else -- andi
+        "10000" when opcode = "0010011" and funct3 = "101" and funct7 = "0100000" else -- srli
+        "00100" when opcode = "0110011" and funct3 = "111" and funct7 = "0000000" else -- and
 
 
 end Boss;
