@@ -137,8 +137,13 @@ begin
 	PC: ProgramCounter port map(reset, clock, MUXtoPC, PC_Out);
 
 	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); -- check RD
-	MUXPC: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
-	MUXWD: BusMux2to1  port map(Ctrl_MemtoReg, ReadData, MUXtoWD); -- not complete- data?
+
+	MUXPC1: BusMux2tmo1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
+	MUXWD1: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_2, MUXtoWD); -- not complete- data?
+
+	MUXPC2: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
+	MUXWD2: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_1, MUXtoWD); -- not complete- data?
+
 
 	Add_sub: adder_subtracter port map(PC_Out, ImmGen, '0', adder_output_1, C02);
 
@@ -146,7 +151,7 @@ begin
  
 	Regis: Registers port map(Instr_mem(19 downto 15), Instr_mem(24 downto 20), Instr_mem(11 downto 7), MUXtoWD, Ctrl_RegWrite, Read_Data_1, Read_Data_2);
 
-	ArithLU: ALU port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUresult, ALUzero); --
+	ArithLU: ALU port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUresult); --maha changed order to be ALUResult, ALUzero
 
 	Data_mem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, MUXtoALU(31 downto 0), Read_Data_1, Read_Data_2);
 
