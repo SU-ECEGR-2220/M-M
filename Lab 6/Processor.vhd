@@ -128,8 +128,7 @@ architecture holistic of Processor is
 
 	--ALU 
 	signal ALUzero: std_logic;
-	signal ALUresult: std_logic;
-
+	signal ALUresult: std_logic_vector(31 downto 0);
 
 begin
 	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 25), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
@@ -138,7 +137,7 @@ begin
 
 	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); -- check RD
 
-	MUXPC1: BusMux2tmo1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
+	MUXPC1: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
 	MUXWD1: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_2, MUXtoWD); -- not complete- data?
 
 	MUXPC2: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
@@ -153,8 +152,7 @@ begin
 
 	ArithLU: ALU port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUresult); --maha changed order to be ALUResult, ALUzero
 
-	Data_mem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, MUXtoALU(31 downto 0), Read_Data_1, Read_Data_2);
+	Data_mem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, ALUresult(29 downto 0), Read_Data_2, ReadData);
 
 
 end holistic;
-

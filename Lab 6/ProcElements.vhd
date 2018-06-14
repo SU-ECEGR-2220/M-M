@@ -109,8 +109,11 @@ entity ProgramCounter is
 	 PCout: out std_logic_vector(31 downto 0));
 end entity ProgramCounter;
 
-signal tempPC: std_logic_vector(31 downto 0); --to hold the temp PC value
+
 architecture executive of ProgramCounter is
+
+signal tempPC: std_logic_vector(31 downto 0); --to hold the temp PC value
+
 begin
 -- Add your code here
  
