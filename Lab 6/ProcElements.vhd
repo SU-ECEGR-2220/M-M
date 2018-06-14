@@ -75,23 +75,23 @@ begin
         "10" when opcode = "110011" and funct3 = "001" else --bne
         "00";
 
-    ALUOp <=
-        "00000" when opcode = "" and "" = else -- add
-        "00001" when opcode = "" and "" = else -- sub
-        "10000" when opcode = "" and "" = else -- sll
-        "10001" when opcode = "" and "" = else -- srl
-        "" when opcode = "" and "" = else -- beq
-        "" when opcode = "" and "" = else -- bne
-        "" when opcode = "" and "" = else -- lui
-        "" when opcode = "" and "" = else -- sw
-        "" when opcode = "" and "" = else -- lw
-        "" when opcode = "" and "" = else -- addi
-        "00110" when opcode = "" and "" = else -- ori
-        "00110" when opcode = "" and "" = else -- or
-        "10001" when opcode = "" and "" = else -- slli
-        "00100" when opcode = "" and "" = else -- andi
-        "10000" when opcode = "" and "" = else -- srli
-        "00100" when opcode = "" and "" = else -- and
+    ALUCtrl <=
+        "00000" when opcode = "0110011" and "" = else -- add
+        "00001" when opcode = "0110011" and "" = else -- sub
+        "10000" when opcode = "0110011" and "" = else -- sll
+        "10001" when opcode = "0110011" and "" = else -- srl
+        "00001" when opcode = "1100011" and "" = else -- beq
+        "00001" when opcode = "1100011" and "" = else -- bne
+        "00000" when opcode = "0110111" and "" = else -- lui
+        "00000" when opcode = "0100011" and "" = else -- sw
+        "00000" when opcode = "0000011" and "" = else -- lw
+        "00010" when opcode = "0010011" and "" = else -- addi
+        "00110" when opcode = "0010011" and "" = else -- ori
+        "00110" when opcode = "0110011" and "" = else -- or
+        "10001" when opcode = "0010011" and "" = else -- slli
+        "00100" when opcode = "0010011" and "" = else -- andi
+        "10000" when opcode = "0010011" and "" = else -- srli
+        "00100" when opcode = "0110011" and "" = else -- and
 
 
 end Boss;
