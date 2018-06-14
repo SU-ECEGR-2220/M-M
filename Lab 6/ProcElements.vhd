@@ -88,9 +88,9 @@ begin
         "00010" when opcode = "0010011" and "" = else -- addi
         "00110" when opcode = "0010011" and "" = else -- ori
         "00110" when opcode = "0110011" and "" = else -- or
-        "10001" when opcode = "0010011" and "" = else -- slli
+        "10000" when opcode = "0010011" and "" = else -- slli
         "00100" when opcode = "0010011" and "" = else -- andi
-        "10000" when opcode = "0010011" and "" = else -- srli
+        "10001" when opcode = "0010011" and "" = else -- srli
         "00100" when opcode = "0110011" and "" = else -- and
 
 
