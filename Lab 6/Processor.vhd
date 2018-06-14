@@ -135,7 +135,7 @@ begin
 	PC: ProgramCounter port map(reset, clock, MUXtoPC, PC_Out);
 
 	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); -- check RD
-	MUXPC: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
+	MUXPC: BusMux2tmo1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
 	MUXWD: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_, MUXtoWD); -- not complete- data?
 
 	Add_sub: adder_subtracter port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUresult);
