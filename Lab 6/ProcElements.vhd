@@ -92,7 +92,19 @@ begin
         "00100" when opcode = "0010011" and funct3 = "111" else -- andi
         "10000" when opcode = "0010011" and funct3 = "101" and funct7 = "0100000" else -- srli
         "00100" when opcode = "0110011" and funct3 = "111" and funct7 = "0000000" else -- and
-	"11111";
+    "11111";
+    
+    RegWrite <= '1' when (falling_edge(clk) and opcode = "0010011" and funct3 = "110") else --ori
+	    '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "110" and funct7 = "0100000") else --or
+	    '1' when (falling_edge(clk) and opcode = "0010011" and funct3 = "000") else --addi
+	    '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "000" and funct7 = "0000000000") else --add
+	    '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "000" and funct7 = "0100000") else --sub
+	    '1' when (falling_edge(clk) and opcode = "0000011" and funct3 = "010") else  --lw
+	    '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "001" and funct7 = "0000000") else --sll
+        '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "100" and funct7 = "0000000") else --srl
+        '1' when (falling_edge(clk) and opcode = "0010011" and funct3 = "001" and funct7 = "0000000") else --slli
+	    '1' when (falling_edge(clk) and opcode = "0010011" and funct3 = "101" and funct7 = "0100000") else --srli
+	    '0';
        
 end Boss;
 
@@ -128,10 +140,11 @@ begin
     begin
         if Reset = '1' then
             tempPC <= X"00400000";
-        elsif rising_edge(Clock) then
+        elsif falling_edge(Clock) then
             tempPC <= PCin;
+        elsif(rising_edge(Clock)) then
+            PCout <= tempPC;
         end if;
-        PCout <= tempPC;
     end process ProgCount;
 
 end executive;
