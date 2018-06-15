@@ -53,30 +53,28 @@ begin
 -- funct 3 and funct 7 are part of decoding
     
     -- Op-code decode
-    MemtoReg <= '1' when opcode = "0000011" else '0'; --LW
-    MemRead <= '0' when opcode = "0000011" else '1'; --LW
-    MemWrite <= '1' when opcode = "0100011" else '0'; --SW
+    MemtoReg <= '1' when opcode = "0000011" and funct3 = "010" else '0'; --LW
+    MemRead <= '0' when opcode = "0000011" and funct3 = "010"  else '1'; --LW
+    MemWrite <= '1' when opcode = "0100011"  and funct3 = "010"  else '0'; --SW
 
+    -- maha changed ALUsrc to get 0 for all cases
+    --also changed it to be simpler
     ALUsrc <=
-        '1' when opcode = "0010011" and funct3 = "000" else --addi
-        '1' when opcode = "0010011" and funct3 = "110" else --ori
-        '1' when opcode = "0010011" and funct3 = "100" else  --xori
-        '1' when opcode = "0100011" else --sw
-        '1' when opcode = "0000011" else --lw
-        '1' when opcode = "0010011" and funct3 = "001" else  --sll
-        '1' when opcode = "0010011" and funct3 = "101" else  --srl
-        '1' when opcode = "0010011" and funct3 = "001" else  --slli
-        '1' when opcode = "0010011" and funct3 = "101" else  --srli
-        '1' when opcode = "0110111" else   --lui
-        '0';
+        '0' when opcode = "0110011" and funct3 = "000" and funct7 = "0000000" else -- add
+        '0' when opcode = "0110011" and funct3 = "000" and funct7 = "0100000" else -- sub
+        '0' when opcode = "1100011" and funct3 = "000" else -- beq
+        '0' when opcode = "1100011" and funct3 = "001" else -- bne
+        '0' when opcode = "0110011" and funct3 = "110" and funct7 = "0100000" else -- or
+        '0' when opcode = "0110011" and funct3 = "111" and funct7 = "0000000" else -- and
+        '1';
 
     Branch <=
-        "01" when opcode = "1100011" and funct3 = "000" else --beq
+        "01" when opcode = "1100011" and funct3 = "000" else --beq 
         "10" when opcode = "110011" and funct3 = "001" else --bne
         "00";
 
     ALUCtrl <=
-        "00000" when opcode = "0110011" and funct3 = "000" and funct7 = "0000000000" else -- add
+        "00000" when opcode = "0110011" and funct3 = "000" and funct7 = "0000000" else -- add
         "00001" when opcode = "0110011" and funct3 = "000" and funct7 = "0100000" else -- sub
         "10000" when opcode = "0110011" and funct3 = "001" and funct7 = "0000000" else -- sll
         "10001" when opcode = "0110011" and funct3 = "100" and funct7 = "0000000" else -- srl
@@ -92,20 +90,27 @@ begin
         "00100" when opcode = "0010011" and funct3 = "111" else -- andi
         "10000" when opcode = "0010011" and funct3 = "101" and funct7 = "0100000" else -- srli
         "00100" when opcode = "0110011" and funct3 = "111" and funct7 = "0000000" else -- and
-    "11111";
+        "11111";
     
-    RegWrite <= '1' when (falling_edge(clk) and opcode = "0010011" and funct3 = "110") else --ori
-	    '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "110" and funct7 = "0100000") else --or
-	    '1' when (falling_edge(clk) and opcode = "0010011" and funct3 = "000") else --addi
-	    '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "000" and funct7 = "0000000000") else --add
-	    '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "000" and funct7 = "0100000") else --sub
-	    '1' when (falling_edge(clk) and opcode = "0000011" and funct3 = "010") else  --lw
-	    '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "001" and funct7 = "0000000") else --sll
-        '1' when (falling_edge(clk) and opcode = "0110011" and funct3 = "100" and funct7 = "0000000") else --srl
-        '1' when (falling_edge(clk) and opcode = "0010011" and funct3 = "001" and funct7 = "0000000") else --slli
-	    '1' when (falling_edge(clk) and opcode = "0010011" and funct3 = "101" and funct7 = "0100000") else --srli
-	    '0';
-       
+    ImmGen <= 
+            "00" when opcode = "0010011" and funct3 = "000" else --addi
+            "10" when opcode = "1100011" and funct3 = "000" else --beq
+            "10" when opcode = "1100011" and funct3 = "001" else --bne            
+            "00" when opcode = "0010011" and funct3 = "110" else --ori
+            "00" when opcode = "0000011" and funct3 = "010" else  --lw 
+            "00" when opcode = "0010011" and funct3 = "111" else	 --andi
+            "01" when opcode = "0100011" and funct3 = "010" else --sw
+            "11" when opcode = "0110111" else	 --lui
+            "00" when opcode = "0010011" and funct3 = "001" and funct7 = "0000000" else
+            "00" when opcode = "0010011" and funct3 = "101" and funct7 = "0100000" else
+            "ZZ";
+        
+    RegWrite <= 
+            '0' when opcode="0100011" and funct3="010" else	   --sw	
+	        '0' when opcode="1100011" and funct3="000" else	   --beq
+	        '0' when opcode="1100011" and funct3="001" else	    --bne
+            (not clk);
+    
 end Boss;
 
 --------------------------------------------------------------------------------
@@ -138,11 +143,9 @@ begin
 
     ProgCount: process(Clock, Reset)
     begin
-        if Reset = '1' then
+        if (Reset = '1') then
             tempPC <= X"00400000";
-        elsif falling_edge(Clock) then
-            tempPC <= PCin;
-        elsif(rising_edge(Clock)) then
+        elsif(falling_edge(Clock)) then
             PCout <= tempPC;
         end if;
     end process ProgCount;

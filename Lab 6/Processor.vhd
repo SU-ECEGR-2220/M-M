@@ -87,15 +87,18 @@ architecture holistic of Processor is
 
 	-- Add signals
 	-- changed separated signals based on operation
+	--Program Counter
+	signal PC_Out: std_logic_vector(31 downto 0);
 
-	
+	--Adder Signals
+	signal addOut1: std_logic_vector(31 downto 0);
+	signal addOut2: std_logic_vector(31 downto 0);
+	signal co1, co2: std_logic;
 
-	-- MUXES
-	signal MUXtoALU: std_logic_vector(31 downto 0); -- mux output to ALU
-	signal MUXtoWD: std_logic_vector(31 downto 0); -- mux output to write data register from DM or ALU
-	signal MUXtoPC: std_logic_vector(31 downto 0); -- mux output to PC from ADD/SUM
+	--The Instriction Mem Output
+	signal Instr_mem: std_logic_vector(31 downto 0);
 
-	--Control
+	--Control Outputs
 	signal Ctrl_branch: std_logic_vector(1 downto 0); -- Control to branch: eq/not eq
 	signal Ctrl_MemRead: std_logic;			  -- Control to data memory
 	signal Ctrl_MemtoReg: std_logic;		  -- Control to MUX
@@ -103,57 +106,78 @@ architecture holistic of Processor is
 	signal Ctrl_MemWrite: std_logic;		  -- Control to data memory
 	signal Ctrl_ALUSrc: std_logic;			  -- Control to MUX
 	signal Ctrl_RegWrite: std_logic;		  -- Control to registers
-	signal Ctrl_ImmGen: std_logic; -- Control to Imm Gen
+	signal Ctrl_ImmGen: std_logic_vector(1 downto 0); -- Control to Imm Gen
 
-	--Instruction Memory
-	signal Instr_mem: std_logic_vector(31 downto 0);  -- Intruction memory to ctrl, registers, and imm gen
+	--Register Outputs
+	signal Read1: std_logic_vector(31 downto 0); --regs to ALU
+	signal Read2: std_logic_vector(31 downto 0); --regs to ALUMux, RAM
 
-	--PC Out
-	signal PC_Out: std_logic_vector(31 downto 0); -- PC to instruction memory
+	--Data Mem Output
+	signal ReadMem: std_logic_vector(31 downto 0);
 
-	--Registers
-	signal Read_Data_1: std_logic_vector(31 downto 0);  -- registers to ALU
-	signal Read_Data_2: std_logic_vector(31 downto 0);  -- registers to MUX
+	--Muxes Outputs
+	signal MuxToALU: std_logic_vector(31 downto 0); -- mux to alu
+	signal MuxToWriteD: std_logic_vector(31 downto 0); -- mux to reg write data
+	signal MuxToPC: std_logic_vector(31 downto 0); --mux to PC
+	
+	--ALU Outputs
+	signal ALUres: std_logic_vector(31 downto 0); 
+	signal ALUzero: std_logic; 
+	signal BranchO: std_logic; --branch output
 
-	--Adder
-	signal adder_output_1: std_logic_vector(31 downto 0);
-	signal adder_output_2: std_logic_vector(31 downto 0);
-	signal C01: std_logic;
-	signal C02: std_logic;	
+	--ImmGen Output
+	signal ImmGenO: std_logic_vector(31 downto 0);
 
-	--Other
-	signal ImmGen: std_logic_vector(31 downto 0);
-	signal DataOut: std_logic_vector(31 downto 0);
-	signal ReadData: std_logic_vector(31 downto 0);
+	--Temporary Signal
+	signal temp: std_logic_vector(29 downto 0);
 
-	--ALU 
-	signal ALUzero: std_logic;
-	signal ALUresult: std_logic_vector(31 downto 0);
+	
 
 begin
-	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 25), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_RegWrite, Ctrl_ImmGen);
 
-	PC: ProgramCounter port map(reset, clock, MUXtoPC, PC_Out);
+	--Mux everything
+	ALUMux: BusMux2to1   port map(Ctrl_ALUSrc, Read2, ImmGenO, MuxToALU); -- ImmGen output goes into the missing port
+	AdderMux: BusMux2to1   port map(BranchO, addOut1, addOut2, MuxToPC);
+	DataMemMux: BusMux2to1  port map(Ctrl_MemtoReg, ALUres, ReadMem, MuxToWriteD);
 
-	MUXALU: BusMux2to1   port map(Ctrl_ALUSrc, Read_Data_2, ImmGen, MuxtoALU); -- check RD
+	--Addition
+	addFour: adder_subtracter port map(PC_Out, X"00000004", '0', addOut1, co1);
+	addOp: adder_subtracter port map(PC_Out, ImmGenO, '0', AddOut2, co2);
 
-	MUXPC1: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
-	MUXWD1: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_2, MUXtoWD); -- not complete- data?
+	--Other Components
+	PC:ProgramCounter port map(reset, clock, MuxToPC, PC_Out);
 
-	MUXPC2: BusMux2to1   port map(ALUzero, adder_output_1, adder_output_2, MUXtoPC); --
-	MUXWD2: BusMux2to1  port map(Ctrl_MemtoReg, Read_Data_1, MUXtoWD); -- not complete- data?
+	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 25), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_MemWrite,Ctrl_ALUSrc, Ctrl_RegWrite, Ctrl_ImmGen);
 
+	InstrMem: InstructionRAM port map(reset, clock, PC_Out(31 downto 2), Instr_mem);
+	
+	Regis: Registers port map(Instr_mem(19 downto 15), Instr_mem(24 downto 20), Instr_mem(11 downto 7), MuxToWriteD, Ctrl_RegWrite, Read1, Read2);
+	
+	ArithLU: ALU port map(Read1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUres); --maha changed order to be ALUResult, ALUzero
 
-	Add_sub: adder_subtracter port map(PC_Out, ImmGen, '0', adder_output_1, C02);
+	temp <= "0000" & ALUres(27 downto 2);
 
-	Inst_ram: InstructionRAM port map(reset, clock, PC_Out(31 downto 2), Instr_mem);
- 
-	Regis: Registers port map(Instr_mem(19 downto 15), Instr_mem(24 downto 20), Instr_mem(11 downto 7), MUXtoWD, Ctrl_RegWrite, Read_Data_1, Read_Data_2);
+	DataMem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, temp, Read2, ReadMem);
 
-	ArithLU: ALU port map(Read_Data_1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUresult); --maha changed order to be ALUResult, ALUzero
-
-	Data_mem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, ALUresult(29 downto 0), Read_Data_2, ReadData);
-
+	--Branch Control
+	with Ctrl_Branch & ALUZero select
+	BranchO <=  
+				'1' when "101",
+                '1' when "010",
+				'0' when others;
+	
+	-- use ImmGen for encoding/opcoding
+	with Ctrl_ImmGen & Instr_mem(31) select
+	ImmGenO <=   
+	"111111111111111111111" & Instr_mem(30 downto 20) when "001",  -- I type				  
+	"000000000000000000000" & Instr_mem(30 downto 20) when "000",  -- I type	
+	"111111111111111111111" & Instr_mem(30 downto 25) & Instr_mem(11 downto 7) when "011",  -- S type				  
+	"000000000000000000000" & Instr_mem(30 downto 25) & Instr_mem(11 downto 7) when "010",  -- S type		
+	"11111111111111111111" & Instr_mem(7) & Instr_mem(30 downto 25) & Instr_mem(11 downto 8) & '0' when "101", -- Btype			  
+	"00000000000000000000" & Instr_mem(7) & Instr_mem(30 downto 25) & Instr_mem(11 downto 8) & '0' when "100", -- B type						   
+	"1" & Instr_mem(30 downto 12) & "000000000000" when "111", -- U type				  
+	"0" & Instr_mem(30 downto 12) & "000000000000" when "110", -- U type   
+	"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ" when others;
 
 
 end holistic;
