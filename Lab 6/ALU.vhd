@@ -1,24 +1,82 @@
 --------------------------------------------------------------------------------
 --
--- LAB #4
+-- LAB #6 - Processor 
 --
 --------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-Library ieee;
-Use ieee.std_logic_1164.all;
-Use ieee.numeric_std.all;
-Use ieee.std_logic_unsigned.all;
+entity Processor is
+    Port ( reset : in  std_logic;
+	   clock : in  std_logic);
+end Processor;
 
-entity ALU is
-	Port(	DataIn1: in std_logic_vector(31 downto 0);
-		DataIn2: in std_logic_vector(31 downto 0);
-		ALUCtrl: in std_logic_vector(4 downto 0);
-		Zero: out std_logic;
-		ALUResult: out std_logic_vector(31 downto 0) );
-end entity ALU;
+architecture holistic of Processor is
+	component Control
+   	     Port( clk : in  STD_LOGIC;
+               opcode : in  STD_LOGIC_VECTOR (6 downto 0);
+               funct3  : in  STD_LOGIC_VECTOR (2 downto 0);
+               funct7  : in  STD_LOGIC_VECTOR (6 downto 0);
+               Branch : out  STD_LOGIC_VECTOR(1 downto 0);
+               MemRead : out  STD_LOGIC;
+               MemtoReg : out  STD_LOGIC;
+               ALUCtrl : out  STD_LOGIC_VECTOR(4 downto 0); --ALUOP
+               MemWrite : out  STD_LOGIC;
+               ALUSrc : out  STD_LOGIC;
+               RegWrite : out  STD_LOGIC;
+               ImmGen : out STD_LOGIC_VECTOR(1 downto 0));
+	end component;
 
-architecture ALU_Arch of ALU is
-	-- ALU components	
+	component ALU
+		Port(DataIn1: in std_logic_vector(31 downto 0);
+		     DataIn2: in std_logic_vector(31 downto 0);
+		     ALUCtrl: in std_logic_vector(4 downto 0);
+		     Zero: out std_logic;
+		     ALUResult: out std_logic_vector(31 downto 0) );
+	end component;
+	
+	component Registers
+	    Port(	ReadReg1: in std_logic_vector(4 downto 0); 
+                ReadReg2: in std_logic_vector(4 downto 0); 
+                WriteReg: in std_logic_vector(4 downto 0);
+				WriteData: in std_logic_vector(31 downto 0);
+				WriteCmd: in std_logic;
+				ReadData1: out std_logic_vector(31 downto 0);
+		 		ReadData2: out std_logic_vector(31 downto 0));
+	end component;
+
+	component InstructionRAM
+    	Port(	Reset:	  in std_logic;
+		 		Clock:	  in std_logic;
+				Address: in std_logic_vector(29 downto 0);
+		 		DataOut: out std_logic_vector(31 downto 0));
+	end component;
+
+	component RAM 
+	Port(	Reset:	  in std_logic;
+			Clock:	  in std_logic;	 
+			OE:      in std_logic;
+		 	WE:      in std_logic;
+		 	Address: in std_logic_vector(29 downto 0);
+		 	DataIn:  in std_logic_vector(31 downto 0);
+		 	DataOut: out std_logic_vector(31 downto 0));
+	end component;
+	
+	component BusMux2to1
+		Port(selector: in std_logic;
+		     In0, In1: in std_logic_vector(31 downto 0);
+		     Result: out std_logic_vector(31 downto 0) );
+	end component;
+	
+	component ProgramCounter
+	    Port(Reset: in std_logic;
+		 Clock: in std_logic;
+		 PCin: in std_logic_vector(31 downto 0);
+		 PCout: out std_logic_vector(31 downto 0));
+	end component;
+
 	component adder_subtracter
 		port(	datain_a: in std_logic_vector(31 downto 0);
 			datain_b: in std_logic_vector(31 downto 0);
@@ -27,140 +85,99 @@ architecture ALU_Arch of ALU is
 			co: out std_logic);
 	end component adder_subtracter;
 
-	component shift_register
-		port(	datain: in std_logic_vector(31 downto 0);
-		   	dir: in std_logic;
-			shamt:	in std_logic_vector(4 downto 0);
-			dataout: out std_logic_vector(31 downto 0));
-	end component shift_register;
+	-- Add signals
+	-- changed separated signals based on operation
+	--Program Counter
+	signal PC_Out: std_logic_vector(31 downto 0);
 
-	-- Signals
-	signal direction: std_logic; --direction of the shift register
-	signal operation: std_logic; --operation of the adder/subtractor 
-	signal addsub_res: std_logic_vector(31 downto 0); --result of the adder/subtractor
-	signal shift_res: std_logic_vector(31 downto 0); --result of the shifter
-	signal op_res: std_logic_vector(31 downto 0); --result of the operation
-	constant zeros: std_logic_vector(31 downto 0) := (others => '0'); --zero vector for comparison
-	signal carry: std_logic; -- use for adder_subtractor port map	
-begin
-	-- Add ALU VHDL implementation here
-   
-	-- use first bit of Control input to decide direction
-	with ALUCtrl(0) select direction <=
-	'0' when '0', --SLL (left) 
-	'1' when '1', --SLR (right)
-	'Z' when others; --set to high impedence for others
+	--Adder Signals
+	signal addOut1: std_logic_vector(31 downto 0);
+	signal addOut2: std_logic_vector(31 downto 0);
+	signal co1, co2: std_logic;
 
-	with ALUCtrl(0) select operation <=
-	'0' when '0', -- add
-	'1' when '1', -- subtract
-	'Z' when others;
+	--The Instriction Mem Output
+	signal Instr_mem: std_logic_vector(31 downto 0);
 
+	--Control Outputs
+	signal Ctrl_branch: std_logic_vector(1 downto 0); -- Control to branch: eq/not eq
+	signal Ctrl_MemRead: std_logic;			  -- Control to data memory
+	signal Ctrl_MemtoReg: std_logic;		  -- Control to MUX
+	signal Ctrl_ALUCtrl: std_logic_vector(4 downto 0); -- Control to ALU
+	signal Ctrl_MemWrite: std_logic;		  -- Control to data memory
+	signal Ctrl_ALUSrc: std_logic;			  -- Control to MUX
+	signal Ctrl_RegWrite: std_logic;		  -- Control to registers
+	signal Ctrl_ImmGen: std_logic_vector(1 downto 0); -- Control to Imm Gen
 
-	shift: shift_register PORT MAP(DataIn1(31 downto 0), direction, DataIn2(10 downto 6), shift_res(31 downto 0)); -- perform shift 
-	add_sub: adder_subtracter PORT MAP(DataIn1(31 downto 0), DataIn2(31 downto 0), operation, addsub_res(31 downto 0), carry); --add/sub
+	--Register Outputs
+	signal Read1: std_logic_vector(31 downto 0); --regs to ALU
+	signal Read2: std_logic_vector(31 downto 0); --regs to ALUMux, RAM
+
+	--Data Mem Output
+	signal ReadMem: std_logic_vector(31 downto 0);
+
+	--Muxes Outputs
+	signal MuxToALU: std_logic_vector(31 downto 0); -- mux to alu
+	signal MuxToWriteD: std_logic_vector(31 downto 0); -- mux to reg write data
+	signal MuxToPC: std_logic_vector(31 downto 0); --mux to PC
 	
-	--encode the operations:
-	with ALUCtrl select op_res <=
-	addsub_res(31 downto 0) when "00000", -- adder (add/addi)
-	addsub_res(31 downto 0) when "00001", -- subtractor
-	shift_res(31 downto 0) when "10000", -- SLL
-	shift_res(31 downto 0) when "10001", -- SLR
-	(DataIn1(31 downto 0) AND DataIn2(31 downto 0)) when "00100", -- AND/ANDI
-	(DataIn1(31 downto 0) OR DataIn2(31 downto 0)) when "00110", -- OR/ORI
-	DataIn2(31 downto 0) when "00111", -- Pass Through DataIn2
-	zeros when others; -- sets the result to 0 if no approved operation was input
+	--ALU Outputs
+	signal ALUres: std_logic_vector(31 downto 0); 
+	signal ALUzero: std_logic; 
+	signal BranchO: std_logic; --branch output
+
+	--ImmGen Output
+	signal ImmGenO: std_logic_vector(31 downto 0);
+
+	--Temporary Signal
+	signal temp: std_logic_vector(29 downto 0);
+
 	
-
-
-	ALUResult(31 downto 0) <= op_res(31 downto 0); -- get the result
-
-	process(op_res) is
-	begin
-		if(op_res = zeros) then
-			Zero <= '1'; -- tell the user that the result was all 0s
-		else 
-			Zero <= '0'; -- tell the user the operation was performed, no issue
-		end if;
-	end process;
-
-end architecture ALU_Arch;
-
---------------------------------------------------------------------------------
-Library ieee;
-Use ieee.std_logic_1164.all;
-Use ieee.numeric_std.all;
-Use ieee.std_logic_unsigned.all;
-
-entity adder_subtracter is
-	port(	datain_a: in std_logic_vector(31 downto 0);
-		datain_b: in std_logic_vector(31 downto 0);
-		add_sub: in std_logic;
-		dataout: out std_logic_vector(31 downto 0);
-		co: out std_logic);
-end entity adder_subtracter;
-
-architecture calc of adder_subtracter is
--- use the fulladder from above
-COMPONENT fulladder 
-    port (a : in std_logic;
-          b : in std_logic;
-          cin : in std_logic;
-          sum : out std_logic;
-          carry : out std_logic
-         );
-end COMPONENT;
--- use cary32 as the register for adding
--- use hold to work through the operations
-SIGNAL carry32: std_logic_vector(32 DOWNTO 0);
-SIGNAL hold: std_logic_vector(31 DOWNTO 0);
 
 begin
+
+	--Mux everything
+	ALUMux: BusMux2to1   port map(Ctrl_ALUSrc, Read2, ImmGenO, MuxToALU); -- ImmGen output goes into the missing port
+	AdderMux: BusMux2to1   port map(BranchO, addOut1, addOut2, MuxToPC);
+	DataMemMux: BusMux2to1  port map(Ctrl_MemtoReg, ALUres, ReadMem, MuxToWriteD);
+
+	--Addition
+	addFour: adder_subtracter port map(PC_Out, X"00000004", '0', addOut1, co1);
+	addOp: adder_subtracter port map(PC_Out, ImmGenO, '0', AddOut2, co2);
+
+	--Other Components
+	PC:ProgramCounter port map(reset, clock, MuxToPC, PC_Out);
+
+	Ctrl: Control port map(clock, Instr_mem(6 downto 0), Instr_mem(14 downto 12), Instr_mem(31 downto 25), Ctrl_branch, Ctrl_MemRead, Ctrl_MemtoReg, Ctrl_ALUCtrl, Ctrl_MemWrite,Ctrl_ALUSrc, Ctrl_RegWrite, Ctrl_ImmGen);
+
+	InstrMem: InstructionRAM port map(reset, clock, PC_Out(31 downto 2), Instr_mem);
 	
-	carry32(0) <= add_sub; -- no carry in for the first bit
-	-- this will flip the bits of datain_b if add_sub is '1'
-	-- i.e. if it is a subtraction operation
-	holdReg: for i in 31 downto 0 GENERATE
-		holdit: hold(i) <= datain_b(i) xor add_sub;
-	END GENERATE;
-
-	-- use the full adder component via port-mapping 
-	-- to complete the addition now that the subtraction
-	-- posibility has been taken care of
-	addOp: for j in 0 to 31 generate
-		totSum: fulladder PORT MAP(datain_a(j), hold(j), carry32(j), dataout(j), carry32(j+1));	
-	end generate; 
+	Regis: Registers port map(Instr_mem(19 downto 15), Instr_mem(24 downto 20), Instr_mem(11 downto 7), MuxToWriteD, Ctrl_RegWrite, Read1, Read2);
 	
-	co <= carry32(32); -- assign the final carry out
-end architecture calc;
+	ArithLU: ALU port map(Read1, MUXtoALU, Ctrl_ALUCtrl, ALUzero, ALUres); --maha changed order to be ALUResult, ALUzero
 
---------------------------------------------------------------------------------
-Library ieee;
-Use ieee.std_logic_1164.all;
-Use ieee.numeric_std.all;
-Use ieee.std_logic_unsigned.all;
+	temp <= "0000" & ALUres(27 downto 2);
 
-entity shift_register is
-	port(	datain: in std_logic_vector(31 downto 0);
-	   	dir: in std_logic; --direction
-		shamt:	in std_logic_vector(4 downto 0);
-		dataout: out std_logic_vector(31 downto 0));
-end entity shift_register;
+	DataMem: RAM port map(reset, clock, Ctrl_MemRead, Ctrl_MemWrite, temp, Read2, ReadMem);
 
-architecture shifter of shift_register is
-	SIGNAL shift: std_logic_vector(5 downto 0);
-begin
-	-- shift vector gets the direction and shift amount
-	shift <= dir & shamt;
-	-- insert code here.
-	-- using with/select for concurrency
-	WITH shift SELECT dataout(31 downto 0) <=
-		datain(28 downto 0) & "000" WHEN "000011",
-		datain(29 downto 0) & "00" WHEN "000010",
-		datain(30 downto 0) & "0" WHEN "000001",
-		"000" & datain(28 downto 0) WHEN "100011",
-		"00" & datain(29 downto 0) WHEN "100010",
-		"0" & datain(30 downto 0) WHEN "100001",
-		datain(31 downto 0) WHEN OTHERS;
+	--Branch Control
+	with Ctrl_Branch & ALUZero select
+	BranchO <=  
+				'1' when "101",
+                '1' when "010",
+				'0' when others;
+	
+	-- use ImmGen for encoding/opcoding
+	with Ctrl_ImmGen & Instr_mem(31) select
+	ImmGenO <=   
+	"111111111111111111111" & Instr_mem(30 downto 20) when "001",  -- I type				  
+	"000000000000000000000" & Instr_mem(30 downto 20) when "000",  -- I type	
+	"111111111111111111111" & Instr_mem(30 downto 25) & Instr_mem(11 downto 7) when "011",  -- S type				  
+	"000000000000000000000" & Instr_mem(30 downto 25) & Instr_mem(11 downto 7) when "010",  -- S type		
+	"11111111111111111111" & Instr_mem(7) & Instr_mem(30 downto 25) & Instr_mem(11 downto 8) & '0' when "101", -- Btype			  
+	"00000000000000000000" & Instr_mem(7) & Instr_mem(30 downto 25) & Instr_mem(11 downto 8) & '0' when "100", -- B type						   
+	"1" & Instr_mem(30 downto 12) & "000000000000" when "111", -- U type				  
+	"0" & Instr_mem(30 downto 12) & "000000000000" when "110", -- U type   
+	"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ" when others;
 
-end architecture shifter;
+
+end holistic;
