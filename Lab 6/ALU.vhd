@@ -49,15 +49,15 @@ begin
 	with ALUCtrl(0) select direction <=
 	'0' when '0', --SLL (left) 
 	'1' when '1', --SLR (right)
-	'Z' when others; --set to high impedence for others
+	'0' when others; --set to high impedence for others
 
 	with ALUCtrl(0) select operation <=
 	'0' when '0', -- add
 	'1' when '1', -- subtract
-	'Z' when others;
+	'0' when others;
 
 
-	shift: shift_register PORT MAP(DataIn1(31 downto 0), direction, DataIn2(10 downto 6), shift_res(31 downto 0)); -- perform shift 
+	shift: shift_register PORT MAP(DataIn1(31 downto 0), direction, DataIn2(4 downto 0), shift_res(31 downto 0)); -- perform shift 
 	add_sub: adder_subtracter PORT MAP(DataIn1(31 downto 0), DataIn2(31 downto 0), operation, addsub_res(31 downto 0), carry); --add/sub
 	
 	--encode the operations:
